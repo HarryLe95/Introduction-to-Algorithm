@@ -22,7 +22,7 @@ At every loop iteration, we will pick an element to be removed from $A$ and inse
 A naiive way to implement this is to run the previously described process until the inserting index is found and then do index incrementation and assignment. A more efficient way is to do a swap operation at every comparison step if the comparison is not true: if $a_i < a_j'$ then $a_{j+1}'=a_{j}$ and $a_j' = a_i$. An illustration for insertion sort is provided as follows: (figure reproduced from CLRS)![[Pasted image 20211130223823.png]]
 
 #### Pseudo-code for Insertion Sort
-```
+```Pseudo-code
 **Insertion Sort Algorithm**
 Input: array A of N elements
 Output: array A sorted in increasing order 
@@ -38,7 +38,7 @@ for i from 1 to N-1:
 
 	
 #### C/C++ Implementation
-```
+```C++
 void insertion_sort_while(int A[], int N){
 	for (int i = 1; i < N; i++){
 		int key = A[i];
@@ -54,7 +54,7 @@ void insertion_sort_while(int A[], int N){
 ```
 
 #### Python Implementation
-```
+```python
 def insertion_sort(A:
 	for i in range(1,len(A)):
 		key=A[i]
@@ -77,3 +77,114 @@ The property that we wants to show is that from initialisation to termination, t
 - Initialisation: when i = 1, the array A[0] is correctly sorted.
 - Maintenance: when i > 1, A[0:i] is correctly sorted by construction. It is possible to make a proof by contradiction here. 
 - Termination: the algorithm terminates when it has scanned through all elements of A. Since we have built a sub-array A[0:N] that is correctly sorted, A is then correctly sorted. 
+
+### Exercise
+- Rewrite insertion sort to produce non-increasing instead of non-decreasing order.
+
+	```Python
+	def reverse_sort(A):
+		for i in range(len(A)-2,-1,-1):
+			key = A[i]
+			j = i + 1
+			while (j<len(A) and key < A[j]):
+				A[j-1]=A[j]
+				j=j+1
+			A[j-1]=key
+	```
+
+- Consider the searching problem: 
+	- **Input**: $A = <a_0,\dots,a_N>$ and a value $v$
+	- **Output**: index $i$ such that $A[i]==v$ or $-1$ if does not exist.
+	- Write pseudo code for **linear search** which scans through the sequence looking for $v$.
+	- Prove using **loop invariant** that the algorithm is correct.
+
+	 ```Python
+	 def linear_search(A,v):
+	    i = -1
+		for i in range(len(A)):
+			if A[i]==v:
+				return i
+		return -1
+	 ```
+	 
+	 ```Text
+	 Proof using loop invariant concept: 
+	 We prove that using the linear search algorithm, the correct 
+	 answer has already been provided, otherwise -1.
+	 Initialisation: set i = -1: trivially correct since we haven't
+	 found the matching instance.
+	 Maintenance: If at the beginning of each loop, the matching
+	 element/index has not been found, then by the end of the loop
+	 iteration, the index has either been found - returned or set 
+	 to -1. 
+	 Termination: Also trivial since if the index has been found
+	 -> Returned, otherwise it has scanned through all elements
+	 without finding the matching index. Hence return -1.
+	 ```
+- Consider the problem of adding two n-bit integers, stored in two n-element arrays A and B. The sum should be stored in binary form in (n+1) element array C. Write pseudo code. 
+
+	```Python
+	def binary_addition(A,B):
+		if len(A) != len(B):
+			N = max(len(A),len(B))
+			A = np.concatenate([np.zeros(N-len(A)),A],0)
+			B = np.concatenate([np.zeros(N-len(B)),B],0)
+		N = len(A)
+		C = np.zeros(N+1,dtype=np.int8)
+		for i in range(N-1,-1,-1):
+			C[i+1] = A[i] + B[i]
+			if C[i+1] > 1:
+				C[i+1] = 0
+				C[i] = 1
+		return C
+	```
+	Some functions for testing: 
+	```Python
+	def d2b(d):
+		#Converts declimal to binary
+		if d == 0: 
+			return np.array([])
+		N = int(np.floor(np.log2(d))+1)
+		B = np.zeros(N,dtype=np.int8)
+		for i in range(N-1,-1,-1):
+			if d >= pow(2,i):
+				B[N-1-i]=1
+				d-=pow(2,i)
+		return B
+	```
+	
+	```Python
+	def b2d(B):
+		#Converts binary to decimal
+		N = len(B)
+		d = 0 
+		for i in range(N-1,-1,-1):
+			d+= pow(2,N-1-i)*B[i]
+		return d
+	```
+	
+### Analysing algorithms:
+Actual time taken for an execution of an algorithm varies based on the underlying software and hardware. What is often more useful is to think about is the number of calculations that the computer needs to carry out for a given algorithm. This can be measured in the number of multiplication, addition, and other operations carried out, but we can abstract away this concept by thinking about how such number changes with an increase in the amount of input data. Here, analysis is often simplified using the notion of input size. Assuming that each operation costs the computer an amount of $c$ seconds (c is often a random variable), we will show later on that instead of using a messy formulation of computation cost with a lot of $c$, we can abstract away the idea using the big O notion. 
+
+Let's provide an example by analysing the run time of insertion sort: 
+
+```Pseudo-code
+**Insertion Sort Algorithm**
+Input: array A of N elements
+Output: array A sorted in increasing order 
+-------------------------------------------
+Command:							Cost:	Times:
+for i from 1 to N-1:				c1		N
+	key = A[i]						c2		N-1
+	j = i - 1						c3		N-1
+	while j >= 0 and key < A[j]		c4		(sum from 1 to N-1)*t_i
+		A[j+1] = A[j]				c5		(sum from 1 to N-1)*(t_i-1)
+		j--							c6     	(sum from 1 to N-1)*(t_i-1)
+	A[j+1]=key						c7		N-1
+```
+Assuming that the for and while loop exit by doing a comparison check (-i.e if the exit condition is met), then the number of times to taken to run through an N-iteration loop is N+1 instead of N like the usual operations. Note that the third column times shows the total number of times that the computer execute this line, hence the times for an inner loop should be multiplied by the number of iterations taken by the outter loops. $t_i$ shows the number of times the inner while loop is executed - i.e. when $i=1$, the maximum nHence for the worst case analysis, we can have: 
+
+$$T(n) = (c_1+c_2+c_3+c_7)*N - (c_2+c_3+c_7) + \sum_1^{N-1}(c_4t_i + c_5(t_i-1)+ c_6(t_i-1))$$
+
+From geometric sum formula, we have: 
+$$\sum_1^Ni=\frac{N(N+1)}{2}$$
