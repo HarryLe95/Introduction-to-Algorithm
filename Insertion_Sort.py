@@ -34,7 +34,6 @@ def linear_search(A,v):
             return i
     return -1
 
-
 def binary_addition(A,B):
     if len(A) != len(B):
         N = max(len(A),len(B))
@@ -68,8 +67,25 @@ def d2b(d):
             d -= pow(2,i)
     return B
 
-A = d2b(34)
-B = d2b(4)
-C = binary_addition(A,B)
-print(b2d(C))
+def selection_sort(A):
+    N = len(A)
+    for i in range(N-1):
+        key = A[i]
+        for j in range(i+1,N): #Find current minimum
+            if key > A[j]: #Make a swap if minimum found
+                temp=key 
+                key = A[j]
+                A[j]= temp
+        A[i] = key
+
+N_array = 100
+N_trials = 100000
+attempt = 0 
+A = np.arange(N_array)
+for i in range(N_trials):
+    A = np.random.permutation(A) #Shuffle A around
+    attempt += linear_search(A,1) + 1 #Plus one since index from 0 
+attempt /= N_trials #Average number of attempts
+print(attempt)
+
 print("End")
