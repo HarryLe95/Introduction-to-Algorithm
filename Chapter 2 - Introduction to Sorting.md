@@ -306,12 +306,14 @@ attempt /= N_trials #Average number of attempts
  ```
  
 ### Divide and Conquer - Merge Sort
+
 So far, the technique that we use to design insertion sort was based on an **incremental** approach, in which we sort an array $A$ by arranging its element one at a time. Another approach **divide and conquer** is based on the idea of breaking down a large problem into smaller and managable chunk to process. At this point, it is also useful to talk about **recursive** algorithms: algorithms that keep calling themselves until the desired solution has been met. Recursive algorithms often follow the divide and conquer approach, in which the original problem is partitioned into sub-problems that are to be solved recursively and the results combined at the end. We will go into greater details on this topic in future chapters. For now, let's present the idea of **merge sort**:
 - Divide: divide an array $A$ of $n$ elements into $A'_0$ and $A'_1$, each of length $n/2$.
 - Conquer: sort the two sub-arrays recursively. If the length of the array is small enough, we can directly solve the problem. 
 - Combine: merge the two sorted sub-arrays. 
 
-It's important to note that the combine step involves more than simply concatenating the two sub-sequence; for example, given two sub-arrays $(1,3,7)$ and $(2,4,5)$, we also need additional processing step so that the final array $(1,2,3,4,5,7)$ is sorted. In merge sort, the algorithm bottoms out when the divided sub-array has a length of 1, in which case, is in a correct order. We will see later on that merge-sort can be improved by combining with insertion-sort when the sub-array is small.
+#### Merge Function
+It's important to note that the combine step involves more than simply concatenating the two sub-sequence; for example, given two sub-arrays $(1,3,7)$ and $(2,4,5)$, we also need additional processing step so that the final array $(1,2,3,4,5,7)$ is sorted. 
 
 Now let's think about how to merge two already sorted sub-arrays, this process involves the following: 
 - Let $i$ and $j$ be the iterating indices through each sub-arrays. For simplicity, we denote $E$ and $F$ as the sub-arrays, and $i \in \{0,1,\dots,N_E-1\}, j \in \{0,1,\dots,N_F-1\}$. 
@@ -320,8 +322,153 @@ Now let's think about how to merge two already sorted sub-arrays, this process i
 - At each iteration of $k$, set $S[k] = min(E[i],F[j])$, if $E[i] = min(E[i],F[j])$ then increment $i$ by $1$. Otherwise, increment $j$ by one. This ensures that as $k$ is incremented, either $i$ or $j$ is incremented, and since $k$ can iterate through a maximum of $N_S=N_E+N_F$ times, both sub-arrays $E$ and $F$ have been scanned by the end of $N_S$ iterations.  
 - Once one array has been out-of-index (will definitely happen if one sub-array is longer than the other -i.e. $F$ is longer than $E$), the compiler will return an index-out-of-bound error if we try to compare $E[N_E]$ and $F[j]$. To avoid this problem, we can either pre-pad each sub-array with a large number so that once $E$ runs out of legitimate values, comparison will be between the legitimate values of  $F$ and the very large illegitimate value of $E$, in which case, values of $F$ should always be selected. 
 
-The pseudo-code for this process is written as follows:
+The code for this process is written as follows:
 ```Python
-def merge_subarrays(E,F):
+def merge_subarrays(E,F,large_val=np.array([1e8])):
+	N_E, N_F = len(E), len(F)
+	i,j=0,0
+	#Prepading
+	E = np.concatenate([E,large_val],0)
+	F = np.concatenate([F,large_val],0)
+	S = np.zeros(N_E+N_F)
 	
+	for k in range(N_E+N_F):
+		if E[i]<F[j]:
+			S[k]=E[i]
+			i+=1
+		else:
+			S[k]=F[j]
+			j+=1
+	return S
 ```
+
+#### Divide Function
+In merge sort, the algorithm bottoms out when the divided sub-array has a length of 1, in which case, is in a correct order. We will see later on that merge-sort can be improved by combining with insertion-sort when the sub-array is small. For now, let's think of a way to implement this procedure: 
+
+- Let $A$ be the unsorted array of $N$ elements. Let $I_j$ be the index set whose consecutive elements denote the partition index of $A$ at iteration $j$. For example:
+	- $j=0:$ 
+		- $I_0=[0,N]$, 
+		- $A[0:N]=A$
+	- $j=1:$ 
+		- $I_1=[0,\lceil \frac{N}{2} \rceil,N]$
+		- $A_0 = A[0:\lceil \frac{N}{2} \rceil]$
+		- $A_1 = A[\lceil \frac{N}{2} \rceil:N]$
+	- $j=k:$ 
+		- $I_k=[0,\dots,\lceil \frac{I_{k-1}[n]+I_{k-1}[n+1]}{2} \rceil,\dots,N]$
+		- $n \in \{0,1,\dots,N-1\}$
+		- $A_m = A[2I_{k}[m]:2I_k[m]+1]$
+		- $m \in \{0,1,\dots,2^k-1\}$
+- If you are overwhelmed at this point by the mathematical notations, do not fret, all of the above just means that at every iteration, we insert the median index between every two elements in the index set. At iteration $k$, we partition each previous parition into parts that are roughly equal in length. The splitting indices (start-end) are the consecutive elements of the index set $I_k$. As an example, let $N$ = 5 and $A=[0,1,2,3,4]$:
+	- $j=0$:
+		- $I_0=[0,5]$
+		-  $A_0=A[0:5]=A$ 
+	- $j=1$:
+		- $I_1=[0,3,5]$
+		- $A_0=[0,1,2]$
+		- $A_1=[3,4]$
+	- $j=2$:
+		- $I_2=[0,2,3,4,5]$
+		- $A_0=[0,1]$
+		- $A_1=[2]$
+		- $A_3=[3]$
+		- $A_4=[4]$
+	- $j=3$:
+		- $I_3=[0,1,2,3,3,4,4,5,5]$
+		- $A_0=[0]$
+		- $A_1=[1]$
+		- $A_2=[2]$
+		- $A_3=[]$
+		- $A_4=[3]$
+		- $A_5=[]$
+		- $A_6=[4]$
+		- $A_7=[]$
+- At this point, let's think about how many iterations $k$ are required to split the original array $A$ such that each parition $A_m$ has at most one element ($A_m$ can be empty). It is meaningful to consider $k$ to be first iteration in which each partition has at most one element; obviously if the partitioning process continues, every parition will also has at most one element. Let $N_i$ denotes the length of the longest partition at iteration $i$ -i.e. $N_0=N$:
+	- If $A$ is an even-length array, after each iteration, the length of each partition is exactly half that of its parent: $N_i=N_{i-1}/2$. Hence: 
+		- $$
+	\begin{align}
+	&N/2^k=1\\
+	&k=\log_2(N)
+	\end{align}$$
+	- If $A$ is an odd-length array, the first iteration splits $A$ into two partitions of length $(N+1)/2$ and $(N+1)/2-1$, the former of which is longer than the later. We can see that if we divide each partition by half, the longest partition at iteration $i$ is always the one derived from the longest partition at iteration $i-1$. Hence:
+		- $$
+	N_i = \begin{cases}
+	N_{i-1}/2 \quad \text{if $N_i$ is even }\\
+	(N_{i-1}+1)/2 \quad \text{otherwise}\\
+	\end{cases}
+		$$ 
+		- We observe that from the previous definition: 
+			$$\begin{align}
+		&2N_i \geq N_{i-1} \quad \text{equality occurs when $N_{i-1}$ is even}\\
+		&2^2N_i\geq 2N_{i-1}\geq N_{i-2}\\
+		&2^iN_{i}\geq N_0\\
+		&2^kN_k=2^k\geq N_0
+		\end{align}$$
+		- Additionally $2^{k-1}\ < N_0$ by construction -i.e. $N_{k-1} > 1$. Hence:
+			- $2^k\geq N$
+			- $k \geq \log_2{N}$, again equality only happen if $N_i$ is even at every step, or $N_0$ is even.
+			- $k = \lceil \log_2(N) \rceil$
+	
+- From the result shown, we should run for $\lceil \log_2(N) \rceil$ iterations for the final partitions to be at most one in length. The python script to verify this process is shown: 
+
+```Python
+import numpy as np 
+
+def split_index_array(A):
+	S = np.zeros(2*len(A)-1,dtype=np.int8)
+	S[0] = A[0]
+	i_S = 1
+	for i_A in range(len(A)-1):
+		S[i_S] = np.ceil((A[i_A] + A[i_A+1])/2)
+		S[i_S+1] = A[i_A+1]
+		i_S+=2
+	return S
+
+def print_partitions(A,index_array):
+	for i in range(len(index_array)-1):
+		print(A[index_array[i]:index_array[i+1]])
+	print("\n")
+
+N = 5
+A = np.arange(N)
+index_array = np.array([0,N])
+n_iter = int(np.ceil(np.log2(N)))
+
+for j in range(n_iter):
+	index_array = split_index_array(index_array)
+	print(index_array)
+	print_partitions(A,index_array)
+```
+The code given above started out with the index array that contains just two elements and subsequently modify the index array based on the recurrent relationship described earlier, you will see that this is going to be very useful for recursive function later on. However, at some points, it is useful to have a direct formulation of the index array. The previous scheme can be translated into direct formulation, but I will provide a second index paritioning scheme that is both correct and easier to obtain: 
+$$
+I_{k}[i] = \left\lceil \frac{i\times N}{2^k}\right\rceil 
+$$
+This can be implemented very efficiently as follows:
+```Python
+def get_index_array(k,N):
+	I = np.arange(2**(k+1)+1)/2**(k+1)
+	I = np.ceil(I*N)
+	return I.astype(int)
+```
+
+```Python
+def merge_sort_non_recursive(A):
+	n_iter = int(np.ceil(np.log2(N))) 	
+	for i in range(n_iter):
+		I = get_index_array(n_iter-i-1,N)
+		for j in range(0,len(I)-1,2):
+			E = A[I[j]:I[j+1]]
+			F = A[I[j+1]:I[j+2]]
+			A[I[j]:I[j+2]] = merge_subarrays(E,F)
+```
+
+```Python
+def merge_sort_recursive(A,i_start=0,i_end=len(A)):
+	i_mid = int(np.ceil((i_start+i_end)/2))
+	if (i_end - i_start) > (i_mid-i_start):
+		merge_sort_recursive(A,i_start,i_mid)
+		merge_sort_recursive(A,i_mid,i_end)
+	A[i_start:i_end] = merge_subarrays(A[i_start:i_mid],A[i_mid:i_end])
+```
+
+
+

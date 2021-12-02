@@ -1,4 +1,5 @@
 import numpy as np
+import math 
 
 def insertion_sort(A):
     for i in range(1,len(A)):
@@ -78,14 +79,67 @@ def selection_sort(A):
                 A[j]= temp
         A[i] = key
 
-N_array = 100
-N_trials = 100000
-attempt = 0 
-A = np.arange(N_array)
-for i in range(N_trials):
-    A = np.random.permutation(A) #Shuffle A around
-    attempt += linear_search(A,1) + 1 #Plus one since index from 0 
-attempt /= N_trials #Average number of attempts
-print(attempt)
+def merge_subarrays(E,F,large_val=np.array([1e8])):
+    N_E, N_F = len(E), len(F)
+    i,j=0,0
+    E = np.concatenate([E,large_val],0)
+    F = np.concatenate([F,large_val],0)
+    S = np.zeros(N_E+N_F)
+    for k in range(N_E+N_F):
+        if E[i]<F[j]:
+            S[k]=E[i]
+            i+=1
+        else:
+            S[k]=F[j]
+            j+=1
+    return S
 
+def split_index_array(A):
+    S = np.zeros(2*len(A)-1,dtype=np.int8)
+    S[0] = A[0]
+    i_S = 1
+    for i_A in range(len(A)-1):    
+        S[i_S] = np.ceil((A[i_A] + A[i_A+1])/2)
+        S[i_S+1] = A[i_A+1]
+        i_S+=2
+            
+    return S
+
+def print_partitions(A,index_array):
+    for i in range(len(index_array)-1):
+        print(A[index_array[i]:index_array[i+1]])
+    print("\n")
+
+N = 7
+A = np.arange(N)
+A = A[::-1] 
+index_array = np.array([0,N])
+n_iter = int(np.ceil(np.log2(N)))
+
+
+
+def get_index_array(k,N):
+    I = np.arange(2**(k+1)+1)/2**(k+1)
+    I = np.ceil(I*N)
+    return I.astype(int)
+
+def merge_sort_non_recursive(A):
+    n_iter = int(np.ceil(np.log2(N)))    
+    for i in range(n_iter):
+        I = get_index_array(n_iter-i-1,N)
+        for j in range(0,len(I)-1,2):
+            E = A[I[j]:I[j+1]]
+            F = A[I[j+1]:I[j+2]]
+            A[I[j]:I[j+2]] = merge_subarrays(E,F)
+
+def merge_sort_recursive(A,i_start=0,i_end=len(A)):
+    i_mid = int(np.ceil((i_start+i_end)/2))
+    if (i_end - i_start) > (i_mid-i_start): 
+        merge_sort_recursive(A,i_start,i_mid)
+        merge_sort_recursive(A,i_mid,i_end)
+    A[i_start:i_end] = merge_subarrays(A[i_start:i_mid],A[i_mid:i_end])
+
+
+merge_sort_recursive(A)
+print(A)
 print("End")
