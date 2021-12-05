@@ -79,89 +79,89 @@ The property that we wants to show is that from initialisation to termination, t
 - Termination: the algorithm terminates when it has scanned through all elements of A. Since we have built a sub-array A[0:N] that is correctly sorted, A is then correctly sorted. 
 
 ### Exercise
-- Rewrite insertion sort to produce non-increasing instead of non-decreasing order.
+1.1 Rewrite insertion sort to produce non-increasing instead of non-decreasing order.
 
-	```Python
-	def reverse_sort(A):
-		for i in range(len(A)-2,-1,-1):
-			key = A[i]
-			j = i + 1
-			while (j<len(A) and key < A[j]):
-				A[j-1]=A[j]
-				j=j+1
-			A[j-1]=key
-	```
+```Python
+def reverse_sort(A):
+	for i in range(len(A)-2,-1,-1):
+		key = A[i]
+		j = i + 1
+		while (j<len(A) and key < A[j]):
+			A[j-1]=A[j]
+			j=j+1
+		A[j-1]=key
+```
 
-- Consider the searching problem: 
+1.2 Consider the searching problem: 
 	- **Input**: $A = <a_0,\dots,a_N>$ and a value $v$
 	- **Output**: index $i$ such that $A[i]==v$ or $-1$ if does not exist.
 	- Write pseudo code for **linear search** which scans through the sequence looking for $v$.
 	- Prove using **loop invariant** that the algorithm is correct.
 
-	 ```Python
-	 def linear_search(A,v):
-	    i = -1
-		for i in range(len(A)):
-			if A[i]==v:
-				return i
-		return -1
-	 ```
-	 
-	 ```Text
-	 Proof using loop invariant concept: 
-	 We prove that using the linear search algorithm, the correct 
-	 answer has already been provided, otherwise -1.
-	 Initialisation: set i = -1: trivially correct since we haven't
-	 found the matching instance.
-	 Maintenance: If at the beginning of each loop, the matching
-	 element/index has not been found, then by the end of the loop
-	 iteration, the index has either been found - returned or set 
-	 to -1. 
-	 Termination: Also trivial since if the index has been found
-	 -> Returned, otherwise it has scanned through all elements
-	 without finding the matching index. Hence return -1.
-	 ```
-- Consider the problem of adding two n-bit integers, stored in two n-element arrays A and B. The sum should be stored in binary form in (n+1) element array C. Write pseudo code. 
+ ```Python
+ def linear_search(A,v):
+	i = -1
+	for i in range(len(A)):
+		if A[i]==v:
+			return i
+	return -1
+ ```
 
-	```Python
-	def binary_addition(A,B):
-		if len(A) != len(B):
-			N = max(len(A),len(B))
-			A = np.concatenate([np.zeros(N-len(A)),A],0)
-			B = np.concatenate([np.zeros(N-len(B)),B],0)
-		N = len(A)
-		C = np.zeros(N+1,dtype=np.int8)
-		for i in range(N-1,-1,-1):
-			C[i+1] = A[i] + B[i]
-			if C[i+1] > 1:
-				C[i+1] = 0
-				C[i] = 1
-		return C
-	```
-	Some functions for testing: 
-	```Python
-	def d2b(d):
-		#Converts declimal to binary
-		if d == 0: 
-			return np.array([])
-		N = int(np.floor(np.log2(d))+1)
-		B = np.zeros(N,dtype=np.int8)
-		for i in range(N-1,-1,-1):
-			if d >= pow(2,i):
-				B[N-1-i]=1
-				d-=pow(2,i)
-		return B
-	```
-	
-	```Python
-	def b2d(B):
-		#Converts binary to decimal
-		N = len(B)
-		d = 0 
-		for i in range(N-1,-1,-1):
-			d+= pow(2,N-1-i)*B[i]
-		return d
-	```
+ ```Text
+ Proof using loop invariant concept: 
+ We prove that using the linear search algorithm, the correct 
+ answer has already been provided, otherwise -1.
+ Initialisation: set i = -1: trivially correct since we haven't
+ found the matching instance.
+ Maintenance: If at the beginning of each loop, the matching
+ element/index has not been found, then by the end of the loop
+ iteration, the index has either been found - returned or set 
+ to -1. 
+ Termination: Also trivial since if the index has been found
+ -> Returned, otherwise it has scanned through all elements
+ without finding the matching index. Hence return -1.
+ ```
+1.3 Consider the problem of adding two n-bit integers, stored in two n-element arrays A and B. The sum should be stored in binary form in (n+1) element array C. Write pseudo code. 
+
+```Python
+def binary_addition(A,B):
+	if len(A) != len(B):
+		N = max(len(A),len(B))
+		A = np.concatenate([np.zeros(N-len(A)),A],0)
+		B = np.concatenate([np.zeros(N-len(B)),B],0)
+	N = len(A)
+	C = np.zeros(N+1,dtype=np.int8)
+	for i in range(N-1,-1,-1):
+		C[i+1] = A[i] + B[i]
+		if C[i+1] > 1:
+			C[i+1] = 0
+			C[i] = 1
+	return C
+```
+Some functions for testing: 
+```Python
+def d2b(d):
+	#Converts declimal to binary
+	if d == 0: 
+		return np.array([])
+	N = int(np.floor(np.log2(d))+1)
+	B = np.zeros(N,dtype=np.int8)
+	for i in range(N-1,-1,-1):
+		if d >= pow(2,i):
+			B[N-1-i]=1
+			d-=pow(2,i)
+	return B
+```
+
+```Python
+def b2d(B):
+	#Converts binary to decimal
+	N = len(B)
+	d = 0 
+	for i in range(N-1,-1,-1):
+		d+= pow(2,N-1-i)*B[i]
+	return d
+```
 	
 ### Analysing algorithms:
 Actual time taken for an execution of an algorithm varies based on the underlying software and hardware. What is often more useful is to think about is the number of calculations that the computer needs to carry out for a given algorithm. This can be measured in the number of multiplication, addition, and other operations carried out, but we can abstract away this concept by thinking about how such number changes with an increase in the amount of input data. Here, analysis is often simplified using the notion of input size. Assuming that each operation costs the computer an amount of $c$ seconds (c is often a random variable), we will show later on that instead of using a messy formulation of computation cost with a lot of $c$, we can abstract away the idea using the big O notion. 
@@ -207,66 +207,66 @@ We can see that the running time for worst case follows a quadratic form of N.  
 
 
 ### Exercise
-- Express $n^3/1000 - 100n^2 -100n + 3$ in the big O notation: 
-	```
-	O(N^3)
-	```
-- Consider the following **selection sort** algorithm:
-	- Sort an array $A$ by first finding the smallest element of $A$ then exchange it with $A[0]$, then second smallest $A[1]$ and continues until $A[n-2]$. 
-	- Write a pseudo code for this algorithm.
-	- Prove loop invariant property.
-	- Give the best and worst case analysis.
+1.4 Express $n^3/1000 - 100n^2 -100n + 3$ in the big O notation: 
+```
+O(N^3)
+```
+1.5. Consider the following **selection sort** algorithm:
+- Sort an array $A$ by first finding the smallest element of $A$ then exchange it with $A[0]$, then second smallest $A[1]$ and continues until $A[n-2]$. 
+- Write a pseudo code for this algorithm.
+- Prove loop invariant property.
+- Give the best and worst case analysis.
 	
-	```Python
-	def selection_sort(A):
-		N = len(A)
-		for i in range(N-1):
-			key = A[i]
-			for j in range(i+1,N): #Find current minimum
-				if key > A[j]: #Make a swap if minimum found
-					temp=key 
-					key = A[j]
-					A[j]= temp
-			A[i] = key
-	```
+```Python
+def selection_sort(A):
+	N = len(A)
+	for i in range(N-1):
+		key = A[i]
+		for j in range(i+1,N): #Find current minimum
+			if key > A[j]: #Make a swap if minimum found
+				temp=key 
+				key = A[j]
+				A[j]= temp
+		A[i] = key
+```
 	
-	```Text
-	The loop invariant property here is the left section of the array from the
-	current iterating idex is sorted:
-	Initialisation: A[-1] is trivially sorted since it is empty.
-	Maintenance: if A[0:i] is sorted, by the end of the current iteration, 
-	A[0:i+1] is sorted. This is because A[i] = min(A[i:]) should be smaller
-	than every element of A[0:i]
-	since A[0] = min(A[0,:]) <= A[1] = min A'[1,:] <= A[2] = min A''[2,:] ...
-	where A^n denotes the resulting array after n iteration.
-	Termination: The loop terminates once reaching N-1, when A[0:N-1] is sorted,
-	and the left over element A[N-1] should be larger than everything in A[0:N-1]
-	due to the idea shown above. Hence A is sorted.
- 	```
+```Text
+The loop invariant property here is the left section of the array from the
+current iterating idex is sorted:
+Initialisation: A[-1] is trivially sorted since it is empty.
+Maintenance: if A[0:i] is sorted, by the end of the current iteration, 
+A[0:i+1] is sorted. This is because A[i] = min(A[i:]) should be smaller
+than every element of A[0:i]
+since A[0] = min(A[0,:]) <= A[1] = min A'[1,:] <= A[2] = min A''[2,:] ...
+where A^n denotes the resulting array after n iteration.
+Termination: The loop terminates once reaching N-1, when A[0:N-1] is sorted,
+and the left over element A[N-1] should be larger than everything in A[0:N-1]
+due to the idea shown above. Hence A is sorted.
+```
 	
-	```Text:
-	-----------------------------------------------------------------------------
-	Command: 							Cost:		Times:
-	def selection_sort(A):				
-		N = len(A)						c1			1
-		for i in range(N-1):			c2			N
-			key = A[i]					c3			N-1
-			for j in range(i+1,N):		c4			(sum from 1 to N-1)t_i
-				if key > A[j]: 			c5			(sum from 1 to N-1)(t_i-1)
-					temp=key 			c6			(sum from 1 to N-1)(t_i-1)
-					key = A[j]			c7			(sum from 1 to N-1)(t_i-1)
-					A[j]= temp			c8			(sum from 1 to N-1)(t_i-1)
-			A[i] = key					c9			N-1
-	```
-	The time taken for $c_6,c_7,c_8$ components depend on the outcome of the conditional statement in $c_5$. For worst case analysis, assuming that the array is arranged in reversed order (every condition check is  positive), then time calculation:
-	
-	$$T(N) = c_1 + c_2N + c_3(N-1) + (c_4+c_9)\sum_{i=1}^{N-1}(N-i)+(c_5+c_6+c_7+c_8)\sum_{i=1}^N(N-i-1)$$
-	
-	After simplifying this  expression, the running time is also quadratic of $N$ and is therefore $O(N^2)$. Note that worst and best case running times for selection sort are the same. 
+```Text:
+-----------------------------------------------------------------------------
+Command: 							Cost:		Times:
+def selection_sort(A):				
+	N = len(A)						c1			1
+	for i in range(N-1):			c2			N
+		key = A[i]					c3			N-1
+		for j in range(i+1,N):		c4			(sum from 1 to N-1)t_i
+			if key > A[j]: 			c5			(sum from 1 to N-1)(t_i-1)
+				temp=key 			c6			(sum from 1 to N-1)(t_i-1)
+				key = A[j]			c7			(sum from 1 to N-1)(t_i-1)
+				A[j]= temp			c8			(sum from 1 to N-1)(t_i-1)
+		A[i] = key					c9			N-1
+```
+The time taken for $c_6,c_7,c_8$ components depend on the outcome of the conditional statement in $c_5$. For worst case analysis, assuming that the array is arranged in reversed order (every condition check is  positive), then time calculation:
 
-- Consider linear search algorithm in previous exercise: 
-	- How many elements in $A$ need to be checked on average, assuming equal likelihood of the search value being in any position in the array. $P(v=A[0])=P(v=A[1])=\dots=\frac{1}{N}$ 
-	- What about average case and worst case? 
+$$T(N) = c_1 + c_2N + c_3(N-1) + (c_4+c_9)\sum_{i=1}^{N-1}(N-i)+(c_5+c_6+c_7+c_8)\sum_{i=1}^N(N-i-1)$$
+
+After simplifying this  expression, the running time is also quadratic of $N$ and is therefore $O(N^2)$. Note that worst and best case running times for selection sort are the same. 
+
+1.6 Consider linear search algorithm in previous exercise: 
+- How many elements in $A$ need to be checked on average, assuming equal likelihood of the search value being in any position in the array. $P(v=A[0])=P(v=A[1])=\dots=\frac{1}{N}$ 
+- What about average case and worst case? 
 	```Text
 	Best case: found v after 1st attempt 
 	Worst case: found v after Nth attempt 
@@ -279,7 +279,7 @@ We can see that the running time for worst case follows a quadratic form of N.  
 	\begin{align}
 	P(k) &= P(X=k) = P(v\neq A[0])\times P(v\neq A[1])\times \dots P(v\neq A[k-2])\times P(v=A[k-1])\\
 	&= \left(\frac{N-1}{N}\right)^{k-1}\times\frac{1}{N}
-	
+
 	\end{align}
 	$$
 	
@@ -294,16 +294,17 @@ We can see that the running time for worst case follows a quadratic form of N.  
  As $N \rightarrow \infty$, $\frac{N-1}{N}\rightarrow1$, and we can hence simplify the above expression to: 
  $$E(X) = \frac{1}{N}\times \frac{N(N+1)}{2}=\frac{N+1}{2}$$
  A python code with Monte-Carlo simulation: 
- ```Python
-N_array = 100
-N_trials = 100000
-attempt = 0
-A = np.arange(N_array)
-for i in range(N_trials):
-	A = np.random.permutation(A) #Shuffle A around
-	attempt += linear_search(A,1) + 1 #Plus one since index from 0
-attempt /= N_trials #Average number of attempts
- ```
+ 
+	 ```Python
+	N_array = 100
+	N_trials = 100000
+	attempt = 0
+	A = np.arange(N_array)
+	for i in range(N_trials):
+		A = np.random.permutation(A) #Shuffle A around
+		attempt += linear_search(A,1) + 1 #Plus one since index from 0
+	attempt /= N_trials #Average number of attempts
+	 ```
  
 ### Divide and Conquer - Merge Sort
 
@@ -384,29 +385,29 @@ In merge sort, the algorithm bottoms out when the divided sub-array has a length
 		- $A_7=[]$
 - At this point, let's think about how many iterations $k$ are required to split the original array $A$ such that each parition $A_m$ has at most one element ($A_m$ can be empty). It is meaningful to consider $k$ to be first iteration in which each partition has at most one element; obviously if the partitioning process continues, every parition will also has at most one element. Let $N_i$ denotes the length of the longest partition at iteration $i$ -i.e. $N_0=N$:
 	- If $A$ is an even-length array, after each iteration, the length of each partition is exactly half that of its parent: $N_i=N_{i-1}/2$. Hence: 
-		- $$
+		 $$
 	\begin{align}
 	&N/2^k=1\\
 	&k=\log_2(N)
 	\end{align}$$
 	- If $A$ is an odd-length array, the first iteration splits $A$ into two partitions of length $(N+1)/2$ and $(N+1)/2-1$, the former of which is longer than the later. We can see that if we divide each partition by half, the longest partition at iteration $i$ is always the one derived from the longest partition at iteration $i-1$. Hence:
-		- $$
+		$$
 	N_i = \begin{cases}
 	N_{i-1}/2 \quad \text{if $N_i$ is even }\\
 	(N_{i-1}+1)/2 \quad \text{otherwise}\\
-	\end{cases}
-		$$ 
-		- We observe that from the previous definition: 
+	\end{cases}$$ 
+	
+	- We observe that from the previous definition: 
 			$$\begin{align}
 		&2N_i \geq N_{i-1} \quad \text{equality occurs when $N_{i-1}$ is even}\\
 		&2^2N_i\geq 2N_{i-1}\geq N_{i-2}\\
 		&2^iN_{i}\geq N_0\\
 		&2^kN_k=2^k\geq N_0
 		\end{align}$$
-		- Additionally $2^{k-1}\ < N_0$ by construction -i.e. $N_{k-1} > 1$. Hence:
-			- $2^k\geq N$
-			- $k \geq \log_2{N}$, again equality only happen if $N_i$ is even at every step, or $N_0$ is even.
-			- $k = \lceil \log_2(N) \rceil$
+	- Additionally $2^{k-1}\ < N_0$ by construction -i.e. $N_{k-1} > 1$. Hence:
+	 	- $2^k\geq N$
+		- $k \geq \log_2{N}$, again equality only happen if $N_i$ is even at every step, or $N_0$ is even.
+		- $k = \lceil \log_2(N) \rceil$
 	
 - From the result shown, we should run for $\lceil \log_2(N) \rceil$ iterations for the final partitions to be at most one in length. The python script to verify this process is shown: 
 
@@ -472,3 +473,41 @@ def merge_sort_recursive(A,i_start=0,i_end=len(A)):
 
 
 
+### Exercise
+1.7 Use mathematical induction to show that when $n$ is an exact power of 2, the solution to the recurrence: 
+$$
+T(n) = \begin{cases}
+2 \quad\quad\quad\quad &\text{if $n=2$,}\\
+2T(n/2) + n&\text{if $n=2^k$, for $k>1$}
+\end{cases}$$
+is $T(n) = n\log_2(n)$
+
+**Solution**:
+When $n=2^m$, the solution $T(n)=T(2^m)=n\log_2(n)=2^m\log_2(2^m)=m2^m$. When $k=1, T(2^1)=T(2)=2=1 \times 2^1 =2$, hence the solution is true for $k=1$. Assuming that the solution is true for some $m$ - i.e. $T(2^m)=m2^m$, we need to show that this implies $T(2^{m+1})=(m+1)2^{m+1}$ is true. Indeed, we have:
+$$
+\begin{align}
+T(2^{m+1})=2T(2^m)=2\times m \times 2^m + 2^{m+1}=2^{m+1}(m+1)
+\end{align}
+$$
+The second equality of which comes from the recurrence relation. Hence If the solution is true for some $m$, it is also true for $m+1$...
+
+1.8 We can express insertion sort as a recursive procedure: to sort $A[0:n]$, recursively sort $A[0:n-1]$ then insert $A[n-1]$ into the sorted array. Write a recurrence for this:
+
+**Solution**
+```Python
+
+```
+
+1.9 Referring back to the searching problem, observe that if the sequence $A$ is sorted, we can check the mid point of the sequence against the search value $v$ and eliminate half the sequence. The **binary search** algorithm repeats this procedure, halving the size of the search space each time. Write a python code for this procedure and argue that the worst case running time is $O(\log(n))$.
+
+1.10 Observe that the insertion process of insertion sort involves scanning backward the sorted array to find the insertion index using linear search. Is it possible to use binary search to improve the worst case running time of insertion sort to $O(n\log(n))$
+
+1.11 Describe a $O(n\log(n))$ algorithm that, given a set $S$ of $n$ integers and another integer $x$, determine whether there exist two elements in $S$ whose sum is exactly $x$.
+
+1.12 Insertion sort on small arrays in merge sort: 
+Although insertion sort is $O(n^2)$ and merge sort is $O(n\log n)$, when sorting small arrays, insertion sort can be faster than merge sort. Therefore, it makes sense to coarsen the leaves of the recursion by using insertion sort within merge sort when the subproblem becomes small. Consider a modification to merge sort in
+which $n=k$ sublists of length $k$ are sorted using insertion sort and then merged using the standard merging mechanism, where $k$ is a value to be determined.
+
+- Show that insertion sort can sort the $n=k$ sublists, each of length $k$, in $O(nk)$ worst-case time.
+- Show how to merge the sublists in $O(n \log(n/k))$ worst-case time.
+- Given that the modiﬁed algorithm runs in $O(nk + n \log(n/k))$ worst-case time, what is the largest value of $k$ as a function of n for which the modiﬁed algorithm has the same running time as standard merge sort, in terms of $O$ notation?
