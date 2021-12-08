@@ -110,7 +110,7 @@ def print_partitions(A,index_array):
         print(A[index_array[i]:index_array[i+1]])
     print("\n")
 
-N = 7
+N = 15
 A = np.arange(N)
 A = A[::-1] 
 index_array = np.array([0,N])
@@ -124,14 +124,16 @@ def get_index_array(k,N):
     return I.astype(int)
 
 def merge_sort_non_recursive(A):
-    n_iter = int(np.ceil(np.log2(N)))    
+    n_iter = int(np.ceil(np.log2(N)))   
+    counter = 0  
     for i in range(n_iter):
         I = get_index_array(n_iter-i-1,N)
         for j in range(0,len(I)-1,2):
             E = A[I[j]:I[j+1]]
             F = A[I[j+1]:I[j+2]]
             A[I[j]:I[j+2]] = merge_subarrays(E,F)
-
+            counter += 1
+    print(counter)
 def merge_sort_recursive(A,i_start=0,i_end=len(A)):
     i_mid = int(np.ceil((i_start+i_end)/2))
     if (i_end - i_start) > (i_mid-i_start): 
@@ -139,7 +141,24 @@ def merge_sort_recursive(A,i_start=0,i_end=len(A)):
         merge_sort_recursive(A,i_mid,i_end)
     A[i_start:i_end] = merge_subarrays(A[i_start:i_mid],A[i_mid:i_end])
 
+def binary_search_recursive(A,v,i_start,i_end):
+    i_mid = int(np.ceil((i_start+i_end)/2))
+    if i_end-i_start > i_mid - i_start:
+        if A[i_mid] > v:
+            r = binary_search_recursive(A,v,i_start,i_mid)
+        else:
+            r = binary_search_recursive(A,v,i_mid,i_end)
+    else:
+        if A[i_start]==v:
+            r = i_start
+        else:
+            r = -1
+    return r
 
-merge_sort_recursive(A)
-print(A)
+N = 10
+A = np.arange(N)
+
+for i in range(N):
+    print(binary_search_recursive(A,i,0,N))
+    
 print("End")

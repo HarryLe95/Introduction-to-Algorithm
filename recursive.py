@@ -77,15 +77,49 @@ def merge(array:np.array,start_idx:int,mid_idx:int,end_idx):
         mid_idx (int): end idx of 1st subarray (exclusive) and start idx of 2nd sub array (inclusive)
         end_idx ([type]): end idx of 2nd subarray (exclusive)
     """
-    i,j = 0,0 
-    N = end_idx - start_idx
-    temp = array[mid_idx]
-    for i in range(N):
-        if array[start_idx + i] < temp:
-            array[start_idx + i], temp = temp, array[start_idx + i]
+    sub_1 = np.array(array[start_idx:mid_idx],copy=True)
+    sub_2 = np.array(array[mid_idx:end_idx],copy=True)
+    idx_1, idx_2 = 0, 0
+    for i in range(start_idx,end_idx):
+        if idx_1 >= mid_idx-start_idx:
+            array[i:end_idx] = sub_2[idx_2:]
+            break
+        if idx_2 >= end_idx-mid_idx:
+            array[i:end_idx] = sub_1[idx_1:]
+            break
+        if sub_1[idx_1] < sub_2[idx_2]:
+            array[i] = sub_1[idx_1]
+            idx_1+=1
+        else:
+            array[i] = sub_2[idx_2]
+            idx_2+=1        
+
+def merge_inplace(array:np.array,start_idx:int,mid_idx:int,end_idx:int):
+    """In-place merging of two sub-arrays in merge sort.
+    First sub-array: array[start_idx:mid_idx]
+    Second sub-array: array[mid_idx:end_idx]
+    Note that the last idx in np array is exclusive.
+    Args:
+        array (np.array): array to be sorted
+        start_idx (int): start idx of 1st subarray (inclusive)
+        mid_idx (int): end idx of 1st subarray (exclusive) and start idx of 2nd sub array (inclusive)
+        end_idx ([type]): end idx of 2nd subarray (exclusive)
+    """
+    i, j = start_idx, mid_idx
+    temp_1, temp_2 = array[i],array[j]
+    for k in range(start_idx,end_idx):
+        if temp_1 < temp_2:
+            i = i + 1  
+            temp = array[i] if i < mid_idx else 1e9
+            array[k]= temp_1
+            temp_1 = temp
+        else:
+            j = j + 1 
+            temp = array[j] if j < end_idx else 1e9
+            array[k] = temp_2
+            temp_2 = temp
+        print(array,temp_1,temp_2,i,j)
             
-            
-        
 
 def compare(a,b,criterion:str):
     # Function to compare a against b based on criterion (
@@ -159,7 +193,8 @@ def test_sort(F,*args,**kwargs):
             print(f"Test failed. Expected: {expected_output}, Actual: {actual_output}")
 
 if __name__ == "__main__":
-    F = selection_sort
-    test_sort(F)       
-    print("end")    
-    
+    A = np.array([1,3,16,19,21,2,5,7,8,11])
+    print(A[0:math.ceil(len(A)/2)],A[math.ceil(len(A)/2):len(A)])
+    merge_inplace(A,0,math.ceil(len(A)/2),len(A))
+    print(A)
+    print("End")
