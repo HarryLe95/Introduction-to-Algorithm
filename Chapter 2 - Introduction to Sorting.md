@@ -493,10 +493,7 @@ The second equality of which comes from the recurrence relation. Hence If the so
 
 1.8 We can express insertion sort as a recursive procedure: to sort $A[0:n]$, recursively sort $A[0:n-1]$ then insert $A[n-1]$ into the sorted array. Write a recurrence for this:
 
-**Solution**
-```Python
 
-```
 
 1.9 Referring back to the searching problem, observe that if the sequence $A$ is sorted, we can check the mid point of the sequence against the search value $v$ and eliminate half the sequence. The **binary search** algorithm repeats this procedure, halving the size of the search space each time. Write a python code for this procedure and argue that the worst case running time is $O(\log(n))$.
 
