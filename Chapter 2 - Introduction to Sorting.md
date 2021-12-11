@@ -323,6 +323,10 @@ Now let's think about how to merge two already sorted sub-arrays, this process i
 - At each iteration of $k$, set $S[k] = min(E[i],F[j])$, if $E[i] = min(E[i],F[j])$ then increment $i$ by $1$. Otherwise, increment $j$ by one. This ensures that as $k$ is incremented, either $i$ or $j$ is incremented, and since $k$ can iterate through a maximum of $N_S=N_E+N_F$ times, both sub-arrays $E$ and $F$ have been scanned by the end of $N_S$ iterations.  
 - Once one array has been out-of-index (will definitely happen if one sub-array is longer than the other -i.e. $F$ is longer than $E$), the compiler will return an index-out-of-bound error if we try to compare $E[N_E]$ and $F[j]$. To avoid this problem, we can either pre-pad each sub-array with a large number so that once $E$ runs out of legitimate values, comparison will be between the legitimate values of  $F$ and the very large illegitimate value of $E$, in which case, values of $F$ should always be selected. 
 
+![[Pasted image 20211210172825.png]]
+
+![[Pasted image 20211210173007.png]]
+
 The code for this process is written as follows:
 ```Python
 def merge_subarrays(E,F,large_val=np.array([1e8])):
@@ -471,7 +475,12 @@ def merge_sort_recursive(A,i_start=0,i_end=len(A)):
 	A[i_start:i_end] = merge_subarrays(A[i_start:i_mid],A[i_mid:i_end])
 ```
 
+![[Pasted image 20211210173048.png]]
 
+![[Pasted image 20211210173148.png]]
+
+### Run time complexity of merge sort
+For now, let's just take for granted that the running time complexity of merge sort is $O(n\log n)$. This can be roughly understood by referring to the recursion tree in Figure 2.5 in the book. It takes at most $\log_2(n)+1$ operations to split the original array to sub-arrays of length one, and when  we traverse back the recursion tree from the bottom to the top, each time we merge sub-arrays with a total length of $n$ each time, hence the total time taken for the merge operations in each level is $cn$ (remembering that the merge operation between two sub-arrays of length $a$ and $b$ would require $a+b$ iterations). In summary, there are $\log_2(n)+1$ levels, each costs $cn$, hence the total operation costs $cn\log(n)+cn$, hence the time complexity can be taken to be $O(n\log n)$. The specific mechanism of the big O notation will be discussed in the next chapter, while the derivation of divide and conquer's recurrence relation and time complexity will be discussed in chapter 4. 
 
 ### Exercise
 1.7 Use mathematical induction to show that when $n$ is an exact power of 2, the solution to the recurrence: 

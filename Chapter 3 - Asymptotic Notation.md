@@ -1,7 +1,47 @@
 ### Standard Notations and Common Functions
 #### Asymptotic Notation
 Asymptotic efficiency of algorithm deals with how the running time increases with the size of the input. Usually, an algorithm that is asymptotically more efficient will be the best choice for all but very small inputs. Additionally, it is also important to be clear what type of running time that we are discussing - worst case, expected, best case all come with different notations. 
+![[Pasted image 20211210210224.png]]
+$$
+\begin{align}
+&\Theta(g(n))=\{f(n):\exists c_1>0,c_2>0,n_0\in \mathbb{N}, \forall n \geq n_0, 0 \leq c_1g(n)\leq f(n)\leq c_2g(n) \} \\
+&O(g(n))=\{f(n):\exists c>0,n_0\in \mathbb{N}, \forall n \geq n_0, 0 \leq f(n)\leq cg(n) \} \\
+&\Omega(g(n))=\{f(n):\exists c>0,n_0\in \mathbb{N}, \forall n \geq n_0, 0 \leq c_2g(n)\leq f(n) \} \\
+\end{align}
+$$
+Since the asymptotic notation is a set, the correct way to write running time should be 
+$$T(n) \in O(g(n))$$
+but in general, this is usually written as $T(n) = O(g(n))$ to mean the same thing. Based on the definition of asymptotic notation, $T(n)$ is asymptotically non negative -i.e. when $n$ reaches a certain level, $T(n)$ will become non negative. This often has a correct physical interpretation when it comes to running time of an algorithm. When $T(n)=\Theta(g(n))$, we say that $g(n)$ is an *asymptotic tight bound* for $T(n)$. When $T(n)=O(g(n))$, we say that $g(n)$ is an *asymptotic upper bound* for $T(n)$. When $T(n)=\Omega(g(n))$, we say that $g(n)$ is an *asymptotic lower bound* for $T(n)$. We usually use $O$ to denote the worst-case running time, $\Omega$ to denote the best-case running time, and $\Theta$ to denote the average case running time of an algorithm. 
 
+Note that the bound specified by $O$ may or may not be a tight upper-bound. For instance, $T(n)=cn$ has worst-case of $O(n)$, but it is also true to say that $T(n)=O(n^2)$. Sometimes, people use $O$ to mean tight asymptotic bounds (find the tightest that you can prove). Based on the definition of asymptotic notations, we can drop lower order terms simply by finding a combination of $n_0$ and $c$ such that the statement holds. We will show an example of this in a later exercise (excercise 3.1.2 ). It is also sufficient to show (see exercise 3.1.1) that the running time of an algorithm is $\Theta(g(n))$ if its worst case running time is $O(g(n))$ and its best case running time is $\Omega(g(n))$.
+
+As mentioned previously, the use of $O$ and $\Omega$ implies a bound that may or may not be tight. To denote a bound that is loose, we use $o$ and $\omega$, both of which are less commonly seen:
+$$
+\begin{align}
+o(g(n))=\{f(n):\forall c > 0, \exists n_0>0:\forall n \geq n_0, 0 \leq f(n) < cg(n)\} \\
+\omega(g(n))=\{f(n):\forall c > 0, \exists n_0>0:\forall n \geq n_0, 0  \leq cg(n) < f(n)\}\\
+\end{align}
+$$
+You make see the following definitions that are equivalent:
+$$
+\begin{align}
+& f(n) = o(g(n)) \iff \lim_{n \rightarrow \infty}\frac{f(n)}{g(n)}=0\\
+& f(n)=\omega(g(n)) \iff \lim_{n \rightarrow \infty} \frac{f(n)}{g(n)}=\infty
+\end{align}
+$$
+The main difference between $O$ and $o$ is that $O$ only requires the statement to be true for **some** constant $c$, while $o$ requires the statement to be true for $all$ constant $c$, hence if $f(n)=o(g(n))$, then $f(n)=O(g(n))$, but the reverse may not be true. Intuitively, the previous statement means that if $g$ is a loose upper bound for $f$, then $g$ is an upper bound for $f$. You will see in later exercises that many relational properties of the real numbers also hold for asymptotic relations. We will prove them as we move along. 
+
+Prove the following claims:
+- 3.1.1/ $f(n)=\Theta(g(n)) \iff f(n)=O(g(n)) \text{ and }f(n)=\Omega(g(n))$
+Use definition
+- 3.1.2/ Prove that if $T(n)=an^2+bn+c$, $T(n)=\Theta(n^2)$ for $a,b,c \in \mathbb{R}$.
+- 3.1.3/ Use the following definitions of limits to prove the limit definition of $o$ and $\omega$:
+	- We say $\lim_{n \rightarrow \infty} f(n)=c$ if for all $\epsilon>0$, there exists  $n_0 \in \mathbb{N}$ such that for all $n>n_0$, $|f(n)-c|<\epsilon$.
+	- We say $\lim_{n \rightarrow \infty} f(n)=\infty$ if for all $\epsilon > 0$, there exists $n_0 \in \mathbb{N}$ such that for all $n > n_0$, $f(n)>\epsilon$.
+	Use definition again, quite straight forward.
+- 3.1.4/Prove the Transitivity, Reflexivity, Symmetry, Transpose Symmetry properties on page 51,52 of the textbook.
+
+Do exercises 3.1.1 - 3.1.7 in the textbook. (I have the solution but haven't written them down here).
 
 #### Increasing and Decreasing Functions
 Let $f:D\rightarrow \mathbb{R}$ be a mapping from a domain $D \subset \mathbb{R}$ to the real line,  
@@ -187,6 +227,8 @@ We say that a function is polynomially bounded if $f(n) = O(n^k)$ for some const
 #### Exponentials:
 Prove the following: 
 $$\lim_{n\rightarrow \infty} \frac{n^b}{a^n}=0 \quad \text{for } a > 1$$
-as an exercise, hence deduce that: 
+
+
+hence deduce that: 
 $$n^b = o(a^n)$$
 Therefore, an exponential function with a base 1 is strictly increasing and that it grows faster than any polynomial function. 
