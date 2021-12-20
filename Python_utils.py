@@ -4,6 +4,7 @@ from itertools import permutations
 from typing import Union
 from colorama import Fore, Style
 import copy
+import time
 
 def linear_search(array:np.array,value:Union[int,float],direction:str="forward",criterion:str="equal",*args,**kwargs):
     """Search an array in an element-wise manner in the given direction and return outputs based on given criterion
@@ -29,7 +30,7 @@ def linear_search(array:np.array,value:Union[int,float],direction:str="forward",
             if compare(key,value,criterion):
                 return N-i-1
     return -1
-            
+      
 def insertion_sort(array:np.array,search_method:str="linear",*args,**kwargs):
     """Perform insertion sort. At every iteration, backtrack and find the index of the first element less than current value,
        then insert by advancing right. 
@@ -284,7 +285,20 @@ def test_merge(F,*args,**kwargs):
         print(f"{Fore.RED}{copy.error} failed test(s)!{Style.RESET_ALL}")
 
 if __name__ == "__main__":
-    F = bubble_sort
-    test_sort(F)
+    N = 100
+    array = np.arange(N)[::-1]
+    start = time.time()
+    insertion_sort(array)
+    end = time.time()
+    duration = end - start
+    print(duration)
+    
+    
+    array = np.arange(N)[::-1]
+    start = time.time()
+    merge_sort(array)
+    end = time.time()
+    duration = end - start
+    print(duration)
 
     print("End")

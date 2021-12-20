@@ -13,7 +13,11 @@ Since the asymptotic notation is a set, the correct way to write running time sh
 $$T(n) \in O(g(n))$$
 but in general, this is usually written as $T(n) = O(g(n))$ to mean the same thing. Based on the definition of asymptotic notation, $T(n)$ is asymptotically non negative -i.e. when $n$ reaches a certain level, $T(n)$ will become non negative. This often has a correct physical interpretation when it comes to running time of an algorithm. When $T(n)=\Theta(g(n))$, we say that $g(n)$ is an *asymptotic tight bound* for $T(n)$. When $T(n)=O(g(n))$, we say that $g(n)$ is an *asymptotic upper bound* for $T(n)$. When $T(n)=\Omega(g(n))$, we say that $g(n)$ is an *asymptotic lower bound* for $T(n)$. We usually use $O$ to denote the worst-case running time, $\Omega$ to denote the best-case running time, and $\Theta$ to denote the average case running time of an algorithm. 
 
-Note that the bound specified by $O$ may or may not be a tight upper-bound. For instance, $T(n)=cn$ has worst-case of $O(n)$, but it is also true to say that $T(n)=O(n^2)$. Sometimes, people use $O$ to mean tight asymptotic bounds (find the tightest that you can prove). Based on the definition of asymptotic notations, we can drop lower order terms simply by finding a combination of $n_0$ and $c$ such that the statement holds. We will show an example of this in a later exercise (excercise 3.1.2 ). It is also sufficient to show (see exercise 3.1.1) that the running time of an algorithm is $\Theta(g(n))$ if its worst case running time is $O(g(n))$ and its best case running time is $\Omega(g(n))$.
+Note that the bound specified by $O$ may or may not be a tight upper-bound. For instance, $T(n)=cn$ has worst-case of $O(n)$, but it is also true to say that $T(n)=O(n^2)$.
+
+$$c>1, n_0 = 1, \forall n \geq 1, n \leq n^2$$
+
+Sometimes, people use $O$ to mean tight asymptotic bounds (find the tightest that you can prove). Based on the definition of asymptotic notations, we can drop lower order terms simply by finding a combination of $n_0$ and $c$ such that the statement holds. We will show an example of this in a later exercise (excercise 3.1.2 ). It is also sufficient to show (see exercise 3.1.1) that the running time of an algorithm is $\Theta(g(n))$ if its worst case running time is $O(g(n))$ and its best case running time is $\Omega(g(n))$.
 
 As mentioned previously, the use of $O$ and $\Omega$ implies a bound that may or may not be tight. To denote a bound that is loose, we use $o$ and $\omega$, both of which are less commonly seen:
 $$
@@ -157,6 +161,35 @@ $$\left\lceil \frac{a}{b} \right\rceil = \frac{m}{b} \leq \frac{a + b - 1}{b}$$
 $$\left\lfloor \frac{a}{b} \right\rfloor = \frac{n}{b} \geq \frac{a - b + 1}{b}$$
 QED
 
+An alternate proof:
+Consider the case that $a$ is not divisible by $b$ -i.e. $a = kb + r$ where $k,r \in \mathbb{N}, 1 \leq r<b$. Hence, the ceiling function:
+$$\left\lceil \frac{a}{b} \right\rceil = \left\lceil \frac{kb+r}{b} \right\rceil=\frac{kb}{b}+1 = \frac{kb}{b} + \frac{b-r+r}{b}=\frac{kb+r}{b}+\frac{b-r}{b}=\frac{a}{b}+\frac{b-r}{b}\leq \frac{a+(b-1)}{b}$$
+The inequality occurs since $r \geq 1$. 
+The floor function:
+$$\left\lfloor \frac{a}{b} \right\rfloor=\frac{kb}{b}=\frac{kb+r-r}{b}=\frac{a-r}{b}\geq\frac{a-(b-1)}{b}$$
+The inequality occurs since $r < b, r \in \mathbb{N}$, or $r\leq b-1$ 
+#### Polynomials:
+Given a nonnegative integer $d$, a polynomial in n of degree d is:
+$$p(n) = \sum_{i=0}^d a_in^i$$
+We say that a function is polynomially bounded if $f(n) = O(n^k)$ for some constant $k$.
+
+#### Exponentials:
+Prove the following: 
+$$\lim_{n\rightarrow \infty} \frac{n^b}{a^n}=0 \quad \text{for } a > 1$$
+hence deduce that: 
+$$n^b = o(a^n)$$
+*Proof*:
+Use L'Hopital's rule - reproduced as follows:
+Let $f,g$ be differentiable on an open internal $I$, except possibly at $c \in I$, if $\lim_{n \rightarrow c}f(n)=\lim_{n \rightarrow c}g(n)=0$ or $\infty$, and $g(n) \neq 0$ for all $n \in I, n \neq c$, and 
+$\lim_{n \rightarrow c}\frac{f'(x)}{g'(x)}$ exists, then 
+$$\lim_{n \rightarrow c}\frac{f(n)}{g(n)} =\lim_{n \rightarrow c}\frac{f'(x)}{g'(x)}$$
+Let $f(n) = n^b$ and $g(n) = a^n$. Note that $\lim_{n \rightarrow \infty} f(n) = \lim_{n \rightarrow \infty}g(n)=\infty.$ We also have $f(n),g(n)$ are b times differentiable, and $g^{(m)}(n) \neq 0$ where $m$ denotes the $m$ order differentiation of $g(m)$, then we have:
+$$\lim_{n \rightarrow \infty}\frac{f(n)}{g(n)} =\lim_{n \rightarrow \infty}\frac{f'(x)}{g'(x)}=\dots=\lim_{n \rightarrow \infty}\frac{f^{(b)}(n)}{g^{(b)}(n)}=\lim_{n \rightarrow \infty}\frac{b!}{a^n\log^b (a)}=0$$
+QED
+
+
+Therefore, an exponential function with a base > 1 is strictly increasing and that it grows faster than any polynomial function. 
+
 #### Logarithms
 Define a function $\log_b()$ such that $log_b(b^n)=n$ for $b \in \mathbb{R}$.
 If $b>1$ then $\log_b()$ is strictly increasing. 
@@ -216,19 +249,12 @@ $$
 $$
 
 Equation 3.3.14 allows us  to change the base of logarithmic function from one constant to another by multiplying another constant, hence for the big O notation involving logarithmic terms, it does not matter the base and $\log$ is used implicitly with base $e$. 
-We say that a function is *polylogarithmically bounded* if $f(n) = O(\log^kn)$ where $\log^kn=(\log n)^k$ Note that any positive polynomial function grows faster than any polylogarithmic function. *Prove this as an exercise*.
+We say that a function is *polylogarithmically bounded* if $f(n) = O(\log^kn)$ where $\log^kn=(\log n)^k$ Note that any positive polynomial function grows faster than any polylogarithmic function. *Prove this*.
 $$\log^k n = o(n^a) \quad \text{for }a > 0$$ 
 
-#### Polynomials:
-Given a nonnegative integer $d$, a polynomial in n of degree d is:
-$$p(n) = \sum_{i=0}^d a_in^i$$
-We say that a function is polynomially bounded if $f(n) = O(n^k)$ for some constant $k$.
-
-#### Exponentials:
-Prove the following: 
-$$\lim_{n\rightarrow \infty} \frac{n^b}{a^n}=0 \quad \text{for } a > 1$$
-
-
-hence deduce that: 
-$$n^b = o(a^n)$$
-Therefore, an exponential function with a base 1 is strictly increasing and that it grows faster than any polynomial function. 
+*Proof*:
+Again, make use of the L'Hopital rule, showing that :
+$$\lim_{n \rightarrow \infty} \log^kn=\lim_{n \rightarrow \infty} n^a=\infty$$
+with $f(n) = \log^k(n), g(n)=n^a$ being $a$ times differentiable, hence
+$$\lim_{n \rightarrow \infty} \frac{f(n)}{g(n)} = \lim_{n \rightarrow \infty} \frac{f^{(a)}(n)}{g^{(a)}(n)}=\lim_{n \rightarrow \infty}\frac{k!}{n^m}=0$$
+for some constant $m$. 
