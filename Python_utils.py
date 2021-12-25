@@ -1,7 +1,7 @@
 import numpy as np 
 import math 
 from itertools import permutations
-from typing import Union
+from typing import Union, Callable, Any
 from colorama import Fore, Style
 import copy
 import time
@@ -262,7 +262,7 @@ def test_sort(F,*args,**kwargs):
     else:
         print(f"{Fore.RED}{copy.error} failed test(s)!{Style.RESET_ALL}")
 
-def test_merge(F,*args,**kwargs):
+def test_merge(F:Callable,*args,**kwargs):
     error_count = 0
     array = np.random.randint(-100,100,[6])
     expected_output = np.sort(array)
@@ -284,21 +284,12 @@ def test_merge(F,*args,**kwargs):
     else:
         print(f"{Fore.RED}{copy.error} failed test(s)!{Style.RESET_ALL}")
 
-if __name__ == "__main__":
-    N = 100
-    array = np.arange(N)[::-1]
-    start = time.time()
-    insertion_sort(array)
-    end = time.time()
-    duration = end - start
-    print(duration)
-    
-    
-    array = np.arange(N)[::-1]
-    start = time.time()
-    merge_sort(array)
-    end = time.time()
-    duration = end - start
-    print(duration)
 
-    print("End")
+
+
+
+
+if __name__ == "__main__":
+    F = insertion_sort #Unbounded method in python
+    test_sort(F)
+    

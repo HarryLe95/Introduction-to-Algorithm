@@ -1,0 +1,293 @@
+### Python function
+#### Basic Syntax
+User-defined functions, and as an extension, class functions or methods are defined using the `def` keyword. The following function allows you to find the minimum value of a list: 
+
+```Python
+def find_min(array:list):
+	"""Return the minimum value of a list:
+	
+	Args:
+		array <list>: input array
+	Output:
+		min_val: the minimum value
+	
+	Example:
+	
+	"""
+	new_array = array.copy()
+	new_array.sort()
+	min_val = new_array[0]
+	return min_val
+```
+
+#### Default Arguments
+You can set the default value for an argument simply by defining it in the function definition signature. For instance, if we modify the `find_min` function to include the $n^{th}$ smallest number in a given array, we can have an additional argument that does so with a default value of 1 for minimum value.
+
+```Python
+def find_n_smallest(array:list, n_smallest:int=1):
+	"""Return the n smallest value of an array:
+	
+	Args:
+		array <list>: input array
+		n_smallest <int>: if 1 - the minimum. 2 - the 2nd smallest, etc
+		default to 1.
+	Return
+		min_val: the n smallest value of the array
+	"""
+	if n_smallest > len(array):
+		raise ValueError(f"The n smallest argument {n_smallest} must not exceed the length of the array {len(array)}!")
+	if n_smallest < 1: 
+		raise ValueError(f"The n smallest argument {n_smallest} must be greater than 0.")
+		
+	new_array = array.copy()
+	new_array.sort()
+	return new_array[n_smallest-1]
+
+```
+In a function call, if the argument `n_smallest` is not specified, the default value of 1 is evaluated. However if a value is provided, the provided value will be used instead: 
+```Python
+array = [4,3,2,1]
+print(find_n_smallest(array)) #Return 1 since default n_smallest is 1
+print(find_n_smallest(array,2)) #Return 2 since now the 2nd smallest value is required.
+```
+Arguments with a provided default value is deemed optional. Arguments without a default value is required. Note that in defining a function, it is not possible to define a required argument after a default argument. For example:
+```Python
+def isrighttriangle(a,b=1,c):
+	lengths = [a,b,c]
+	hypotenuse = max(lengths)
+	lengths.remove(hypotenuse)
+	return lengths[0]**2 + lengths[1]**2 == hypotenuse**2
+```
+The function `isrighttriangle` would return a syntax error, since the non-default argument `c` is defined after the default argument `b`. 
+
+#### Positional Arguments and Keyword Arguments:
+Positional arguments are arguments that can be called by their position in the function definition. Keyword arguments are arguments that can be called by having a `keyword=value` pair in the function call. An argument can be called as either a positional or a keyword argument. For example, consider the following dummy function 
+
+```Python
+def dummy_function(arg1,arg2):
+	pass
+
+dummy_function(1,2) #1 is passed as positional argument for arg1 and 2 for args2
+dummy_function(args1=1,args2=2) #The same as before, except keyword arguments.
+```
+
+Note that positional argument is different from required argument. In function call, keyword arguments must follow positional arguments. All the keyword arguments must match one of the accepted keywords in the function, but their order does not matter. For example, take the function to check for right angle triangle:
+```Python
+def isrighttriangle(a=3,b=4,c=5):
+	"""Function to check if the given lengths are those of a right angle triangle
+	
+	Args:
+		a, b, c <Union[int,float]>: the 3 sides of a triangle
+	Output:
+		True if the Pythogorean Theorem is satisfied
+	"""
+	lengths = [a,b,c]
+	print(lengths)
+	hypotenuse = max(lengths)
+	lengths.remove(hypotenuse)
+	return lengths[0]**2 + lengths[1]**2 == hypotenuse**2
+```
+```Python
+isrighttriangle(b=3,c=4,a=5) #Valid input
+isrighttriangle(b=4,c=5,d=3) #Invalid input - keyword argument d not defined
+```
+#### Arbitrary number of arguments
+When a final formal parameter of the form `**name` is present, it receives a dictionary containing all keyword arguments except for those corresponding to a formal parameter. This may be combined with a formal parameter of the form `*name`  which receives a tuple containing the positional arguments beyond the formal parameter list.
+This is especially useful if you do not know in advance how many arguments will be passed to your function. Normally, the `variadic` arguments `*args`, `**kwargs` are put at the last of the list of formal parameters, because the put all remaining positional arguments in the tuple `args`, and keyword arguments in the dictionary `kwargs`. Note that `**kwargs` simply unpacks all `key:value` pairs of the dictionary `kwargs` as `keyword=value` pairs. `*args` unpacks all values in the tuple `args` as positional arguments. When writing functions, you have the option to make use of the values in `**kwargs` and `*args` or ignore them completely. I will provide an example for each case as follows: 
+
+```Python
+def isrighttriangle(a=3,b=4,c=5,**kwargs):
+	"""Function to check if the given lengths are those of a right angle triangle
+	
+	Args:
+		a, b, c <Union[int,float]>: the 3 sides of a triangle
+	Output:
+		True if the Pythogorean Theorem is satisfied
+	"""
+	lengths = [a,b,c]
+	print(lengths)
+	hypotenuse = max(lengths)
+	lengths.remove(hypotenuse)
+	return lengths[0]**2 + lengths[1]**2 == hypotenuse**2
+
+isrighttriangle(b=4,c=5,d=3) #Input is now valid with arguments a = 3, b=4, c=5. The additional keyword argument d = 3 is not used
+```
+Note that by having the additional `**kwargs` parameter in the function definition, the keyword argument `d=3` is no longer invalid.  
+
+```Python
+def print_poem(*args):
+	print("Roses are red. Violets are blue")
+	if len(args) == 2:
+		print(f"{args[0] are {args[1]}")
+
+print_poem() #Print Roses are red. Violets are blue
+print_poem("Monkeys like you","in the zoo") #Print the additional arguments
+```
+
+#### Unpacking argument list:
+When the arguments are already in a list or tuple or dictionary but need to be unpacked for a function call, it can be done simply by using the operator `*` for list/tuple and `**` for dictionary: 
+
+```Python
+lengths = {'a':6,'b':8,'c':10,'d':12}
+
+isrighttriangle(**lengths) #print out 6,8,10 corresponding to values of a,b,c
+```
+In this example, the keyword:value pairs `a=6,b=8,c=10` are matched with the formal parameters and `d=12` is put in the remaining kwargs.
+
+
+
+#### Advanced Function - Doc-string and doctest
+The first statement in a function body (optional) is usually the doc-string, which provides information on the function, including the input and output arguments. You can read the doc-string of a function by acessing its `.__doc__` attribute:
+
+```Python
+>>>print(find_min.__doc__)
+
+Return the minimum value of a list:       
+
+        Args:
+                array <List>: input array 
+        Output:
+                min_val: the minimum value
+
+```
+
+Additionally, one can write test cases or examples in the doc-string which can be used for automatic testing with `doctest`. The [`doctest`](https://docs.python.org/3/library/doctest.html#module-doctest "doctest: Test pieces of code within docstrings.") module searches for pieces of text that look like interactive Python sessions, and then executes those sessions to verify that they work exactly as shown. Let's revisit the `find_n_smallest` function:
+
+```Python
+def find_n_smallest(array:list, n_smallest:int=1):
+	"""Return the n smallest value of an array:
+	
+	Args:
+		array <list>: input array
+		n_smallest <int>: if 1 - the minimum. 2 - the 2nd smallest, etc
+		default to 1.
+	Return
+		min_val: the n smallest value of the array
+		
+	Examples:
+	>>> find_n_smallest([9,10,8,5,-1])
+	-1
+	>>> find_n_smallest([9,10,8,5,-1],-1)
+	Traceback (most recent call last):
+		...
+	ValueError: The n smallest argument -1 must be greater than 0.
+	>>> find_n_smallest([9,10,8,5,-1],n_smallest = 3)
+	8
+	>>> find_n_smallest([9,10,8,5,-1],6)
+	Traceback (most recent call last):
+		...
+	ValueError: The n smallest argument 6 must not exceed the length of the array 5!
+	"""
+	if n_smallest > len(array):
+		raise ValueError(f"The n smallest argument {n_smallest} must not exceed the length of the array {len(array)}!")
+	if n_smallest < 1: 
+		raise ValueError(f"The n smallest argument {n_smallest} must be greater than 0.")
+		
+	new_array = array.copy()
+	new_array.sort()
+	return new_array[n_smallest-1]
+
+if __name__ == "__main__":
+	import doctest
+	doctest.testmod()
+
+```
+To run the test, save the file as `test.py` and run the following from the terminal: 
+```Python
+python test.py -v
+```
+The -v flag stands for verbal, and here are the outputs: 
+```Python
+PS C:\Users\harry> python test.py -v 
+Trying:
+    find_n_smallest([9,10,8,5,-1])
+Expecting:
+    -1
+ok
+Trying:
+    find_n_smallest([9,10,8,5,-1],-1)
+Expecting:
+    Traceback (most recent call last):
+            ...
+    ValueError: The n smallest argument -1 must be greater than 0.
+ok
+Trying:
+    find_n_smallest([9,10,8,5,-1],n_smallest = 3)
+Expecting:
+    8
+ok
+Trying:
+    find_n_smallest([9,10,8,5,-1],6)
+(base) PS C:\Users\harry> python test.py -v 
+Trying:
+    find_n_smallest([9,10,8,5,-1])
+Expecting:
+    -1
+ok
+Trying:
+    find_n_smallest([9,10,8,5,-1],-1)
+Expecting:
+    Traceback (most recent call last):
+            ...
+    ValueError: The n smallest argument -1 must be greater than 0.
+ok
+Trying:
+    find_n_smallest([9,10,8,5,-1],n_smallest = 3)
+Expecting:
+    8
+ok
+Trying:
+    find_n_smallest([9,10,8,5,-1],6)
+Expecting:
+    Traceback (most recent call last):
+            ...
+    ValueError: The n smallest argument 6 must not exceed the length of the array 5!
+ok
+1 items had no tests:
+    __main__
+1 items passed all tests:
+   4 tests in __main__.find_n_smallest
+4 tests in 2 items.
+4 passed and 0 failed.
+Test passed.
+```
+That's pretty much all you need to do to make use of `doctest`.
+
+The simplest way to use `doctest` is to end each module with 
+```Python
+if __name__ == "__main__":
+	import doctest
+	doctest.testmod()
+```
+and run the module `M.py` in the terminal:
+```Python
+python M.py -v
+```
+Alternatively, you can run a command line shortcut for testmod:
+```Python
+python -m doctest -v M.py
+```
+This will import `M.py` as a standalone module and run `testmod()` on it. The `-m` flag runs the module doctest as a script and take as argument the file `M.py`.
+
+Additionally, you can create a test file `test.txt` with examples to evaluate the function on. 
+```Python
+import doctest
+doctest.testfile("test.txt")
+```
+This script excecutes and verfies any interactive Python examples contained in `test.txt`. The file content is treated as if it's a giant doc string. For example, it maybe something like this:
+```
+This is an example text file in reStructuredText format.  First import
+``factorial`` from the ``example`` module:
+
+    >>> from example import factorial
+
+Now use it:
+
+    >>> factorial(6)
+    120
+```
+The shortcut for running `testfile()` is:
+```Python
+python -m doctest -v test.txt
+```
+For more information, check the official [API documentation](https://docs.python.org/3/library/doctest.html). 
